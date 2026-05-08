@@ -1,7 +1,9 @@
+from typing import Optional
+from time import sleep
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
 
 
-def get_board(serial_number: str | None = None, simulate: bool = False):
+def get_board(serial_number: Optional[str] = None, simulate: bool = False):
     """
     Muse 2 보드 연결 설정
     - simulate: True면 시뮬레이터 모드
@@ -24,8 +26,6 @@ def collect_eeg(board_shim: BoardShim, board_id: int, duration_sec: int = 10):
     EEG 데이터 수집
     - duration_sec: 수집할 시간 (초)
     """
-    from time import sleep
-
     sampling_rate = BoardShim.get_sampling_rate(board_id)
     num_points = duration_sec * sampling_rate
 
