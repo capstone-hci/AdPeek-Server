@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.routes import router as api_router
 
-app = FastAPI(title="AdPeek EEG API")
+app = FastAPI(title="AdPeek-Server")
 
 app.add_middleware(
     CORSMiddleware,
@@ -11,6 +12,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(api_router, prefix="/api")
+
 @app.get("/")
 def root():
-    return {"message": "AdPeek EEG API"}
+    return {"message": "AdPeek-Server"}
