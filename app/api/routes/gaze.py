@@ -11,7 +11,7 @@ router = APIRouter()
 @router.post("/gaze")
 def receive_gaze(gaze_session: GazeSessionData, db: Session = Depends(get_db)):
     try:
-        gaze_list = [g.dict() for g in gaze_session.data]
+        gaze_list = [g.model_dump() for g in gaze_session.data]
 
         session_store.save_gaze(gaze_session.ad_id, gaze_session.data)
         update_session_gaze(db, gaze_session.ad_id, gaze_list)
