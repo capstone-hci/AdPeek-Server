@@ -1,11 +1,20 @@
 import time
 from fastapi.testclient import TestClient
 from main import app
+from app.core.database import SessionLocal
+from app.database.models import Session as SessionModel, AdResult
 
 client = TestClient(app)
 
 
 def test_full_pipeline():
+    # DB 초기화
+    db = SessionLocal()
+    db.query(SessionModel).filter(SessionModel.ad_id == "test_001").delete()
+    db.query(AdResult).filter(AdResult.ad_id == "test_001").delete()
+    db.commit()
+    db.close()
+
     # 1. 세션 시작
     res = client.post("/api/session/start", json={"ad_id": "test_001"})
     assert res.status_code == 200
@@ -38,6 +47,13 @@ def test_full_pipeline():
 
 
 def test_dashboard():
+    # DB 초기화
+    db = SessionLocal()
+    db.query(SessionModel).filter(SessionModel.ad_id == "test_dash").delete()
+    db.query(AdResult).filter(AdResult.ad_id == "test_dash").delete()
+    db.commit()
+    db.close()
+
     # 참여자 1
     client.post("/api/session/start", json={"ad_id": "test_dash"})
     time.sleep(3)
