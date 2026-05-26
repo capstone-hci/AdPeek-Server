@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: adpeek-server
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: adpeek-db
+          property: connectionString
+      - key: USE_SIMULATE
+        value: true
+      - key: MUSE_SERIAL
+        value: ""
+
+databases:
+  - name: adpeek-db
+    databaseName: adpeek
+    user: adpeek
