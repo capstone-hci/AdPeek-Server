@@ -9,6 +9,7 @@ class Ad(Base):
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
     duration = Column(Float, nullable=False)
+    scene_data = Column(JSON, nullable=True)  # 추가
     created_at = Column(DateTime, server_default=func.now())
 
 
@@ -35,4 +36,5 @@ class AdResult(Base):
     avg_gaze_duration = Column(Float, nullable=True)
     peak_attention_time = Column(Float, nullable=True)
     heatmap_data = Column(JSON, nullable=True)
+    scenes = Column(JSON, nullable=True)  # 추가
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

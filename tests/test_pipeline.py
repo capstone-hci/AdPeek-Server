@@ -49,42 +49,45 @@ def test_full_pipeline():
 def test_dashboard():
     # DB 초기화
     db = SessionLocal()
-    db.query(SessionModel).filter(SessionModel.ad_id == "test_dash").delete()
-    db.query(AdResult).filter(AdResult.ad_id == "test_dash").delete()
+    db.query(SessionModel).filter(SessionModel.ad_id == "ad_001").delete()
+    db.query(AdResult).filter(AdResult.ad_id == "ad_001").delete()
     db.commit()
     db.close()
 
     # 참여자 1
-    client.post("/api/session/start", json={"ad_id": "test_dash"})
+    client.post("/api/session/start", json={"ad_id": "ad_001"})
     time.sleep(3)
     client.post("/api/gaze", json={
-        "ad_id": "test_dash",
+        "ad_id": "ad_001",
         "start_time": 1714900000.0,
         "data": [
             {"x_norm": 0.52, "y_norm": 0.34, "timestamp": 0.000, "elapsed_ms": 0},
             {"x_norm": 0.55, "y_norm": 0.36, "timestamp": 0.033, "elapsed_ms": 33},
         ]
     })
-    client.post("/api/session/stop", json={"ad_id": "test_dash"})
+    client.post("/api/session/stop", json={"ad_id": "ad_001"})
 
     # 참여자 2
-    client.post("/api/session/start", json={"ad_id": "test_dash"})
+    client.post("/api/session/start", json={"ad_id": "ad_001"})
     time.sleep(3)
     client.post("/api/gaze", json={
-        "ad_id": "test_dash",
+        "ad_id": "ad_001",
         "start_time": 1714900010.0,
         "data": [
             {"x_norm": 0.60, "y_norm": 0.40, "timestamp": 0.000, "elapsed_ms": 0},
             {"x_norm": 0.65, "y_norm": 0.45, "timestamp": 0.033, "elapsed_ms": 33},
         ]
     })
-    client.post("/api/session/stop", json={"ad_id": "test_dash"})
+    client.post("/api/session/stop", json={"ad_id": "ad_001"})
 
     # 대시보드 조회
-    res = client.get("/api/dashboard/test_dash")
+    res = client.get("/api/dashboard/ad_001")
     assert res.status_code == 200
     result = res.json()
     assert result["participant_count"] == 2
     assert "avg_attention" in result
     assert "heatmap_data" in result
+    assert "scenes" in result
+    assert len(result["scenes"]) > 0
     print("dashboard:", result)
+    print("scenes:", result["scenes"])
