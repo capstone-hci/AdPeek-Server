@@ -6,7 +6,7 @@ import numpy as np
 router = APIRouter()
 
 
-@router.get("/eeg/status")
+@router.get("/eeg/connect")
 def get_eeg_status():
     board_shim = session_store.board_shim
     board_id = session_store.board_id
