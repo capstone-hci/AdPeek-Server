@@ -9,6 +9,7 @@ class Ad(Base):
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
     duration = Column(Float, nullable=False)
+    scene_data = Column(JSON, nullable=True)  # 추가
     created_at = Column(DateTime, server_default=func.now())
 
 
