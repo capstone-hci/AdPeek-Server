@@ -36,4 +36,5 @@ class AdResult(Base):
     avg_gaze_duration = Column(Float, nullable=True)
     peak_attention_time = Column(Float, nullable=True)
     heatmap_data = Column(JSON, nullable=True)
+    scenes = Column(JSON, nullable=True)  # 추가
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
