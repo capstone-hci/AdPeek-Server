@@ -3,8 +3,6 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.session_store import session_store
-from app.core.config import USE_SIMULATE, MUSE_SERIAL
-from app.services.eeg.collector import get_board
 from app.services.eeg.processor import apply_bandpass_filter, extract_band_powers, compute_indices
 from app.services.eeg.formatter import format_eeg_result
 from app.services.sync.synchronizer import synchronize
@@ -26,16 +24,14 @@ class SessionStopRequest(BaseModel):
 @router.post("/session/start")
 def start_session(body: SessionStartRequest, db: Session = Depends(get_db)):
     try:
-        board_shim, board_id = get_board(
-            serial_number=MUSE_SERIAL,
-            simulate=USE_SIMULATE
-        )
-        sampling_rate = board_shim.get_sampling_rate(board_id)
+        board_shim = session_store.board_shim
+        board_id = session_store.board_id
+        sampling_rate = session_store.sampling_rate
 
-        board_shim.prepare_session()
+        if not board_shim:
+            raise HTTPException(status_code=400, detail="EEG가 연결되지 않았습니다. /api/eeg/connect 먼저 호출하세요.")
+
         board_shim.start_stream()
-
-        session_store.set_board(board_shim, board_id, sampling_rate)
 
         create_session(db, ad_id=body.ad_id, start_time=time.time())
 
@@ -57,7 +53,7 @@ def stop_session(body: SessionStopRequest, db: Session = Depends(get_db)):
 
         data = board_shim.get_board_data()
         board_shim.stop_stream()
-        board_shim.release_session()
+        # release_session 제거 - 연결 유지
 
         filtered = apply_bandpass_filter(data, sampling_rate)
         band_powers = extract_band_powers(filtered, sampling_rate)
@@ -72,7 +68,6 @@ def stop_session(body: SessionStopRequest, db: Session = Depends(get_db)):
         update_session_eeg(db, body.ad_id, eeg_result["eeg"], synced_frames)
 
         session_store.save_eeg(body.ad_id, data, sampling_rate, board_id)
-        session_store.clear_board()
 
         return {"message": "세션 종료", "ad_id": body.ad_id}
 
