@@ -2,7 +2,7 @@ alembic==1.18.4
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.13.0
-brainflow==5.21.0
+brainflow==5.22.2
 certifi==2026.4.22
 click==8.3.3
 fastapi==0.136.1
