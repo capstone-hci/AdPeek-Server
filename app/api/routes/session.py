@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.session_store import session_store
+from app.core.config import USE_SIMULATE, MUSE_SERIAL
 from app.services.eeg.collector import get_board
 from app.services.eeg.processor import apply_bandpass_filter, extract_band_powers, compute_indices
 from app.services.eeg.formatter import format_eeg_result
@@ -25,7 +26,10 @@ class SessionStopRequest(BaseModel):
 @router.post("/session/start")
 def start_session(body: SessionStartRequest, db: Session = Depends(get_db)):
     try:
-        board_shim, board_id = get_board(simulate=True)
+        board_shim, board_id = get_board(
+            serial_number=MUSE_SERIAL,
+            simulate=USE_SIMULATE
+        )
         sampling_rate = board_shim.get_sampling_rate(board_id)
 
         board_shim.prepare_session()
