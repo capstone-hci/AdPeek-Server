@@ -38,3 +38,15 @@ class AdResult(Base):
     heatmap_data = Column(JSON, nullable=True)
     scenes = Column(JSON, nullable=True)  # 추가
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+class Survey(Base):
+    __tablename__ = "surveys"
+
+    id = Column(String, primary_key=True)
+    ad_id = Column(String, nullable=False)
+    session_id = Column(String, nullable=True)
+    recall = Column(String, nullable=False)       # "yes" / "unsure" / "no"
+    brand_score = Column(Integer, nullable=False)  # 1~5
+    emotion = Column(String, nullable=False)       # "positive" / "neutral" / "negative"
+    comment = Column(String, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())

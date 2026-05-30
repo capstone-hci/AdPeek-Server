@@ -5,6 +5,7 @@ from app.api.routes.result import router as result_router
 from app.api.routes.dashboard import router as dashboard_router
 from app.api.routes.eeg import router as eeg_router
 from app.api.routes.stats import router as stats_router
+from app.api.routes.survey import router as survey_router
 
 router = APIRouter()
 router.include_router(gaze_router)
@@ -13,3 +14,4 @@ router.include_router(result_router)
 router.include_router(dashboard_router)
 router.include_router(eeg_router)
 router.include_router(stats_router)
+router.include_router(survey_router)
